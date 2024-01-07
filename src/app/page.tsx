@@ -1,8 +1,13 @@
 import LogoutButton from "@/components/buttons/LogoutButton";
+import { getCurrentUser } from "@/lib/session";
 import { getServerSession } from "next-auth";
 
 export default async function Protected() {
-  const session = await getServerSession();
+  const session = await getCurrentUser();
+
+  if (session) {
+    console.log("session ::", session);
+  }
   return (
     <main className="max-w-2xl min-h-screen flex flex-col items-center mx-auto">
       <div className="w-full flex justify-between my-10">
