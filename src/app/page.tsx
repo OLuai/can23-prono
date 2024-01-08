@@ -6,7 +6,7 @@ export default async function Protected() {
   const session = await getCurrentUser();
 
   if (session) {
-    console.log("session ::", session);
+    // console.log("session ::", session);
   }
   return (
     <main className="max-w-2xl min-h-screen flex flex-col items-center mx-auto">

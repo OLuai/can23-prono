@@ -7,6 +7,12 @@ import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
 
+import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
+
+import { ThemeSwitcher } from "@/components/theme-switcher"
+import { getCurrentUser } from "@/lib/session"
+
 const inter = Inter({ subsets: ["latin"] })
 
 interface RootLayoutProps {
@@ -63,9 +69,15 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const session = await getCurrentUser();
+  const isAuth = !!session;
+  // if (session) {
+  //   // console.log("session ::", session);
+  // }
+  // console.log("session ::", session);
   return (
-    <html lang="frpn" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <head />
       <body
         className={cn(
@@ -79,7 +91,23 @@ export default function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <main className="flex-1">{children}</main>
+          {
+            isAuth ?
+              (
+                <div vaul-drawer-wrapper="">
+                  <div className="relative flex min-h-screen flex-col bg-background">
+                    <SiteHeader />
+                    <main className="flex-1">{children}</main>
+                    <SiteFooter />
+                  </div>
+                </div>
+              )
+              :
+              (<main className="flex-1">{children}</main>)
+          }
+
+          <ThemeSwitcher />
         </ThemeProvider>
       </body>
     </html>
