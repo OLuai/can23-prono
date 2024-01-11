@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 export default function GoogleButton() {
   return (
     <button
-      className="border border-slate-300 rounded px-5 py-4 flex items-center"
+      className="border border-slate-300 rounded px-5 py-4 flex items-center justify-center"
       onClick={() => signIn("google")}
     >
       <svg
@@ -34,7 +34,7 @@ export default function GoogleButton() {
         ></path>
       </svg>
       <div className="px-2"></div>
-      <span>Sign In with Google</span>
+      <span>Se connecter avec Google</span>
     </button>
   );
 }

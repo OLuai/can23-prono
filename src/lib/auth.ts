@@ -1,8 +1,23 @@
 import { env } from "@/env.mjs";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { FirestoreAdapter, } from "@auth/firebase-adapter"
+import { cert } from "firebase-admin/app"
+import { Adapter } from "next-auth/adapters";
+
+export const MyAdapter = FirestoreAdapter({
+    credential: cert({
+        projectId: env.FIREBASE_PROJECT_ID,
+        clientEmail: env.FIREBASE_CLIENT_EMAIL,
+        privateKey: env.FIREBASE_PRIVATE_KEY,
+    })
+}) as Adapter;
 
 export const authOptions: NextAuthOptions = {
+    adapter: MyAdapter,
+    session: {
+        strategy: "database"
+    },
     providers: [
         GoogleProvider({
             clientId: env.GOOGLE_CLIENT_ID || "",
@@ -14,25 +29,15 @@ export const authOptions: NextAuthOptions = {
             if (Object.keys(userDetail).length === 0) {
                 return false;
             }
-            console.log("Nous avons un utilisateur", userDetail);
             return true;
         },
-        async redirect({ baseUrl }) {
+        async redirect({ baseUrl, url }) {
             return `${baseUrl}`;
         },
-        async jwt({ token, account }) {
-            // Persist the OAuth access_token to the token right after signin
-            console.log("token :: ", token)
-            // console.log("account :: ", account)
-            token.luai = "account.access_token"
-            return token
-        },
         async session({ session, token, user }) {
-            // console.log("session :: ", session)
-            console.log("user :: ", user)
-            // Send properties to the client, like an access_token from a provider.
-            const lulu = { ...session, luai: token.luai }
+            const lulu = { ...session, user }
             return lulu
-        }
+        },
+
     },
 }

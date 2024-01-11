@@ -72,10 +72,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await getCurrentUser();
   const isAuth = !!session;
-  // if (session) {
-  //   // console.log("session ::", session);
-  // }
-  // console.log("session ::", session);
+
   return (
     <html lang="fr" suppressHydrationWarning>
       <head />
@@ -91,7 +88,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <main className="flex-1">{children}</main>
           {
             isAuth ?
               (
