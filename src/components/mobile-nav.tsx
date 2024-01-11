@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 
 import * as React from "react"
@@ -55,15 +56,16 @@ export function MobileNav() {
           <span className="sr-only">Toggle Menu</span>
         </Button>
       </SheetTrigger>
+      <div className="flex items-center gap-2 sm:hidden">
+        <Icons.logo className="h-6 w-6" />
+        <span className="font-bold inline-block">
+          {siteConfig.name}
+        </span>
+      </div>
       <SheetContent side="left" className="pr-0">
-        <MobileLink
-          href="/"
-          className="flex items-center"
-          onOpenChange={setOpen}
-        >
-          <Icons.logo className="mr-2 h-4 w-4" />
-          <span className="font-bold">{siteConfig.name}</span>
-        </MobileLink>
+        <div>
+          Profil de l'utilisateur
+        </div>
         <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
           <div className="flex flex-col space-y-3">
             {docsConfig.mainNav?.map(
@@ -120,7 +122,7 @@ interface MobileLinkProps extends LinkProps {
   className?: string
 }
 
-function MobileLink({
+export function MobileLink({
   href,
   onOpenChange,
   className,
