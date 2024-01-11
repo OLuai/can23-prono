@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import "@/styles/globals.css"
 
 import type { Metadata, Viewport } from "next"
@@ -12,6 +14,12 @@ import { SiteHeader } from "@/components/site-header"
 
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { getCurrentUser } from "@/lib/session"
+
+import { ScrollArea } from "@/registry/new-york/ui/scroll-area"
+import { MobileLink } from "@/components/mobile-nav"
+import React from "react"
+import { docsConfig } from "@/config/docs"
+import { Navigation } from "@/components/navigation"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -36,7 +44,7 @@ export const metadata: Metadata = {
   creator: siteConfig.author,
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "fr_FR",
     url: siteConfig.url.base,
     title: siteConfig.name,
     description: siteConfig.description,
@@ -91,11 +99,25 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           {
             isAuth ?
               (
-                <div vaul-drawer-wrapper="">
+                <div vaul-drawer-wrapper="" className="max-w-4xl mx-auto ">
                   <div className="relative flex min-h-screen flex-col bg-background">
                     <SiteHeader />
-                    <main className="flex-1">{children}</main>
-                    <SiteFooter />
+                    <main className="flex-1">
+                      <div className="border-b">
+                        <div className="px-4 md:px-8 w-full flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+                          <aside className="fixed top-14 z-30 pt-10 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
+                            <div>
+                              Profil de l'utilisateur
+                            </div>
+                            <ScrollArea className="h-full py-6 pr-6 lg:py-8">
+                              <Navigation />
+                            </ScrollArea>
+                          </aside>
+                          {children}
+                        </div>
+                      </div>
+                    </main>
+                    {/* <SiteFooter /> */}
                   </div>
                 </div>
               )
