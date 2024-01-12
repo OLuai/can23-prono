@@ -1,19 +1,20 @@
 import { Timestamp } from "firebase-admin/firestore";
 
-export type Team = {
+export interface Team {
     id: string;
     displayName: string;
     flagId: string;
     group: "A" | "B" | "C" | "D" | "E" | "F";
 }
-export type Stage = {
+export interface Stage {
     id: string;
     displayName: string;
+    startDate: Timestamp;
 }
 
 
 
-export type Match = {
+export interface Match {
     id: string;
     stageId: string;
     startDate: Timestamp;
@@ -25,12 +26,16 @@ export type Match = {
     isEnd: boolean;
 }
 
-export type UserPick = {
+export interface UserPick {
     id: string;
     userId: string;
     matchId: string;
     homeTeamScore: string;
     awayTeamScore: string;
     scorer: string
+}
+
+export interface StageWithMatches extends Stage {
+    matches: Match[]
 }
 
