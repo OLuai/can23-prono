@@ -1,8 +1,7 @@
 import { getTeams } from "@/lib/data";
 
 
-const handler = async function (req: Request,
-    res: Request
+const handler = async function (req: Request
 ) {
     const data = await getTeams();
 
