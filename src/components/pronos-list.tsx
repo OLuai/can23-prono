@@ -1,8 +1,9 @@
 "use client"
-import { StageWithMatchesAndUserPick, Team, UserPick } from "@/types/firestoreData";
+import { Match, StageWithMatchesAndUserPick, Team, UserPick } from "@/types/firestoreData";
 import { useEffect, useState } from "react";
 import { ScoreTile } from "./score-tile";
 import React from "react";
+import { SaveButton } from "./save-button";
 
 interface Props {
   type: "upcoming" | "history";
@@ -15,6 +16,49 @@ export const PronosList = ({ type, readonly = true }: Props) => {
   const [userId, setUserId] = useState<string>("");
   const [userPronostics, setUserPronostics] = useState<UserPick[]>([]);
   const [canSave, setCanSave] = useState<boolean>(false)
+
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  const onSave = async () => {
+
+    setIsSaving(true)
+
+    let date = new Date().getTime();
+    const reqDate = await fetch("http://worldtimeapi.org/api/timezone/Africa/Abidjan");
+    if (reqDate.ok) {
+      const reqData = await reqDate.json();
+      date = new Date(reqData.datetime).getTime();
+    }
+
+    let matches: Match[] = []
+    stages.forEach(stage => {
+      matches = [...matches, ...stage.matches]
+    });
+
+    let allowMatches = matches.filter(mt => {
+      if (mt.starDateTimestamp)
+        return mt.starDateTimestamp > date;
+      return false;
+    }).map(mt => mt.id);
+
+    let allowPronostics = userPronostics.filter(pick => allowMatches.includes(pick.matchId));
+
+
+    const req = await fetch(`/api/auth/savepronos`, {
+      method: "POST",
+      body: JSON.stringify({ picks: allowPronostics })
+    });
+
+    if (req.ok) {
+      const reqData: any = await req.json();
+      if (reqData.ok) {
+        console.log('Pronos saved');
+        setCanSave(false);
+      }
+    }
+    setIsSaving(false)
+
+  }
 
   function setProno(prono: UserPick) {
 
@@ -68,7 +112,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
       {canSave && (
         <div className="fixed top-16 right-4 z-30 md:sticky md:block">
           <div className=" flex items-center flex-1 justify-end">
-            <button onClick={() => { console.log(userPronostics) }}>Save Button</button>
+            <SaveButton clickHandler={onSave} isLoading={isSaving} />
           </div>
         </div>
       )}

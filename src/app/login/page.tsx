@@ -53,7 +53,7 @@ export default async function Login() {
           <div className="mx-auto flex w-full h-full flex-col justify-center space-y-6">
             <div className="flex flex-col space-y-4 text-center">
               <p className="text-xl font-semibold tracking-tight">
-                Se connecter / Créer un compte
+                Prono CAN 2023
               </p>
               <GoogleButton />
             </div>

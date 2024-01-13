@@ -20,6 +20,7 @@ import { MobileLink } from "@/components/mobile-nav"
 import React from "react"
 import { docsConfig } from "@/config/docs"
 import { Navigation } from "@/components/navigation"
+import LogoutButton from "@/components/buttons/LogoutButton"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -108,6 +109,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                           <aside className="fixed top-14 z-30 pt-10 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
                             <div>
                               Profil de l'utilisateur
+                              <LogoutButton />
                             </div>
                             <ScrollArea className="h-full py-6 pr-6 lg:py-8">
                               <Navigation />

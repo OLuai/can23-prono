@@ -1,26 +1,28 @@
+"use client"
 import Link from "next/link"
 
 interface Props {
     children?: React.ReactNode
+    closeDrawer?: Function
 }
 
-export const Navigation = ({ }: Props) => {
+export const Navigation = ({ closeDrawer = () => { } }: Props) => {
 
     return (
         <div className="flex flex-col space-y-2">
 
             <div className="flex flex-col space-y-1 pt-2">
                 <h4 className="font-medium">Mes pronos</h4>
-                <Link href="/">
+                <Link onClick={() => closeDrawer()} href="/">
                     Récapitulatif
                 </Link>
-                <Link href="/upcoming">
+                <Link onClick={() => closeDrawer()} href="/upcoming">
                     Match à venir
                 </Link>
-                <Link href="/bonus">
+                {/* <Link onClick={()=>closeDrawer()} href="/bonus">
                     Questions bonus
-                </Link>
-                <Link href="/history">
+                </Link> */}
+                <Link onClick={() => closeDrawer()} href="/history">
                     Historique
                 </Link>
             </div>

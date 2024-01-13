@@ -14,6 +14,7 @@ import { Button } from "@/registry/new-york/ui/button"
 import { ScrollArea } from "@/registry/new-york/ui/scroll-area"
 import { Sheet, SheetContent, SheetTrigger } from "@/registry/new-york/ui/sheet"
 import { Navigation } from "./navigation"
+import LogoutButton from "./buttons/LogoutButton"
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)
@@ -66,9 +67,10 @@ export function MobileNav() {
       <SheetContent side="left" className="pr-0">
         <div>
           Profil de l'utilisateur
+          <LogoutButton />
         </div>
         <ScrollArea className="my-4 h-[calc(100vh-8rem)]">
-          <Navigation />
+          <Navigation closeDrawer={() => setOpen(false)} />
         </ScrollArea>
       </SheetContent>
     </Sheet>

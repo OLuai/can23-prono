@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase-admin/firestore";
+import { User } from "next-auth";
 
 export interface Team {
     id: string;
@@ -23,8 +24,8 @@ export interface Match {
     starDateTimestamp?: number;
     homeTeamId: string;
     awayTeamId: string;
-    homeTeamScore: string | null;
-    awayTeamScore: string | null;
+    homeTeamScore: number | null;
+    awayTeamScore: number | null;
     scorersIds: string | null;
     isEnd: boolean;
     homeTeam?: Team;
@@ -48,6 +49,10 @@ export interface MatchWithUserPick extends Match {
 }
 
 export interface StageWithMatchesAndUserPick extends Stage {
+    matches: MatchWithUserPick[]
+}
+
+export interface UserWithMatchesAndPick extends User {
     matches: MatchWithUserPick[]
 }
 

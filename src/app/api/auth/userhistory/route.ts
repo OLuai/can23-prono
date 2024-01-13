@@ -3,8 +3,8 @@ import { getCurrentUser } from "@/lib/session";
 import { NextApiRequest, NextApiResponse } from "next";
 
 
-const handler = async function (req: Request
-) {
+const handler = async function (req: Request) {
+
     const body = await req.json();
     let userId: string = "";
 
@@ -17,7 +17,8 @@ const handler = async function (req: Request
     }
 
     const data = await getUserPronosForHistoryMatches(userId);
-    return Response.json({ data: data });
+    return Response.json({ data: data, userId: userId });
+
 
 };
 
