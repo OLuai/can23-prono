@@ -1,46 +1,79 @@
 "use client"
-import { StageWithMatchesAndUserPick, Team } from "@/types/firestoreData";
+import { StageWithMatchesAndUserPick, Team, UserPick } from "@/types/firestoreData";
 import { useEffect, useState } from "react";
 import { ScoreTile } from "./score-tile";
 import React from "react";
 
 interface Props {
   type: "upcoming" | "history";
-  readonly?: boolean
+  readonly?: boolean,
 }
 
 export const PronosList = ({ type, readonly = true }: Props) => {
 
   const [stages, setStages] = useState<StageWithMatchesAndUserPick[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [userId, setUserId] = useState<string>("");
+  const [userPronostics, setUserPronostics] = useState<UserPick[]>([]);
+  const [canSave, setCanSave] = useState<boolean>(false)
+
+  function setProno(prono: UserPick) {
+
+    let newPronos = userPronostics.filter(e => e.id != prono.id);
+    newPronos.push(prono);
+    setUserPronostics(newPronos);
+
+    if (!readonly) {
+      setCanSave(true)
+    }
+  }
 
   useEffect(() => {
     async function fetchData() {
-      const teamsReq = await fetch(`/api/auth/teams`);
-      if (teamsReq.ok) {
-        const teamsReqData = await teamsReq.json()
-        setTeams(teamsReqData.data)
-      }
+      // const teamsReq = await fetch(`/api/auth/teams`);
+      // if (teamsReq.ok) {
+      //   const teamsReqData = await teamsReq.json()
+      //   setTeams(teamsReqData.data)
+      // }
       const stageUri = type === "upcoming" ? "userpronos" : "userhistory"
       const stageReq = await fetch(`/api/auth/${stageUri}`, {
         method: "POST",
         body: JSON.stringify({})
       });
-      console.log("stageReq", stageReq)
+      // console.log("stageReq", stageReq)
       if (stageReq.ok) {
         const stageReqData = await stageReq.json();
-        console.log("stageReqData.data", stageReqData.data)
-        setStages(stageReqData.data)
+        const stages = stageReqData.data as StageWithMatchesAndUserPick[];
+        console.log("stageReqData.data", stageReqData.data);
+
+        setUserId(stageReqData.userId);
+        setStages(stages);
+
+        const pronos: UserPick[] = []
+        stages.forEach(stage => {
+          stage.matches.forEach(mt => {
+            if (mt.userPick) {
+              pronos.push(mt.userPick);
+            }
+          })
+        })
+
       }
     }
 
     fetchData();
-
-
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full pb-6">
+      {canSave && (
+        <div className="fixed top-16 right-4 z-30 md:sticky md:block">
+          <div className=" flex items-center flex-1 justify-end">
+            <button onClick={() => { console.log(userPronostics) }}>Save Button</button>
+          </div>
+        </div>
+      )}
+
+
       {
         stages.map(stage => {
           return (
@@ -48,9 +81,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
               <div className="mt-3 mb-1">{stage.displayName}</div>
               {
                 stage.matches.map(mt => {
-                  let awayTeam = teams.find(e => e.id == mt.awayTeamId);
-                  let homeTeam = teams.find(e => e.id == mt.homeTeamId);
-                  return (<ScoreTile key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={awayTeam} homeTeam={homeTeam} />)
+                  return (<ScoreTile userId={userId} setProno={readonly ? undefined : setProno} readonly={readonly} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
                 })
               }
             </React.Fragment>

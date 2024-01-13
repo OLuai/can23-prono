@@ -1,5 +1,5 @@
 import { getDB } from "@/config/firebase-admin"
-import { Match, Stage, StageWithMatchesAndUserPick, Team, UserPick } from "@/types/firestoreData";
+import { Match, MatchWithUserPick, Stage, StageWithMatchesAndUserPick, Team, UserPick } from "@/types/firestoreData";
 import { OrderByDirection } from "firebase-admin/firestore";
 import { User } from "next-auth";
 
@@ -34,6 +34,63 @@ export const getTeams = async () => {
     });
 
     return teams;
+}
+
+export const getUserPicks = async (userId: string) => {
+    const db = getDB();
+    const collectionRef = db.collection("picks")
+    const querySnapshot = await collectionRef.where("userId", "==", userId).get()
+
+    const result: UserPick[] = [];
+
+    for (let i = 0; i < querySnapshot.docs.length; i++) {
+        const doc = querySnapshot.docs[i]
+        const docData = doc.data() as UserPick;
+
+        const mapData = { ...docData }
+
+        result.push({ ...mapData } as UserPick)
+    }
+
+    return result;
+}
+
+export const getMatches = async (isEnd: boolean = false, order: OrderByDirection = "asc") => {
+    const db = getDB();
+    const collectionRef = db.collection("matches")
+    const querySnapshot = await collectionRef.where("isEnd", "==", isEnd).orderBy("startDate", order).get()
+
+    const result: Match[] = [];
+
+    for (let i = 0; i < querySnapshot.docs.length; i++) {
+        const doc = querySnapshot.docs[i]
+        const docData = doc.data() as Match;
+
+        const mapData = { ...docData, starDateTimestamp: docData.startDate.toMillis() }
+
+        result.push({ ...mapData })
+    }
+
+    return result;
+}
+
+export const getStages = async (order: OrderByDirection = "asc") => {
+    const db = getDB();
+    const collectionRef = db.collection("stages")
+    const querySnapshot = await collectionRef.orderBy("startDate", order).get()
+
+    const result: Stage[] = [];
+
+    for (let i = 0; i < querySnapshot.docs.length; i++) {
+        const doc = querySnapshot.docs[i]
+        const docData = doc.data() as Stage;
+
+        const mapData = { ...docData, starDateTimestamp: docData.startDate.toMillis() }
+
+        result.push({ ...mapData })
+    }
+
+    return result;
 }
 
 export const getUserPickByMatchId = async (userId: string, matchId: string) => {
@@ -77,26 +134,48 @@ export const getMatchesAndUserPickByStageId = async (userId: string, stageId: st
 
 
 export const getUserPronos = async (userId: string, isEnd: boolean = false, order: OrderByDirection = "asc") => {
-    const db = getDB();
-    const collectionRef = db.collection("stages")
-    const querySnapshot = await collectionRef.orderBy("startDate", order).get()
+    // const db = getDB();
+    // const collectionRef = db.collection("stages")
+    // const querySnapshot = await collectionRef.orderBy("startDate", order).get()
 
     const result: StageWithMatchesAndUserPick[] = [];
 
-    for (let i = 0; i < querySnapshot.docs.length; i++) {
-        const doc = querySnapshot.docs[i]
-        const docData = doc.data() as Stage;
+    // for (let i = 0; i < querySnapshot.docs.length; i++) {
+    //     const doc = querySnapshot.docs[i]
+    //     const docData = doc.data() as Stage;
 
-        docData.starDateTimestamp = docData.startDate.toMillis();
+    //     docData.starDateTimestamp = docData.startDate.toMillis();
 
-        const stage = { ...docData }
+    //     const stage = { ...docData }
 
-        const matchesAndPick = await getMatchesAndUserPickByStageId(userId, docData.id, isEnd);
+    //     const matchesAndPick = await getMatchesAndUserPickByStageId(userId, docData.id, isEnd);
 
-        result.push({ ...docData, matches: matchesAndPick } as StageWithMatchesAndUserPick)
+    //     result.push({ ...docData, matches: matchesAndPick } as StageWithMatchesAndUserPick)
+    // }
+
+    // return result;
+    const teams = await getTeams();
+    const stages = await getStages(order) as StageWithMatchesAndUserPick[];
+    const matches = await getMatches(isEnd, order) as MatchWithUserPick[]
+    const userPicks = await getUserPicks(userId);
+
+    for (let i = 0; i < matches.length; i++) {
+        const match = matches[i];
+        match.homeTeam = teams.find(e => e.id == match.homeTeamId);
+        match.awayTeam = teams.find(e => e.id == match.awayTeamId);
+        match.userPick = userPicks.find(e => e.matchId == match.id) || null;
     }
 
+    for (let i = 0; i < stages.length; i++) {
+        const stage = stages[i];
+        stage.matches = matches.filter(e => e.stageId === stage.id)
+
+        if (stage.matches.length > 0) {
+            result.push(stage);
+        }
+    }
     return result;
+
 }
 
 export const getUserPronosForUpcomingMatches = async (userId: string) => {

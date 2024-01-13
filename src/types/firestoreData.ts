@@ -5,6 +5,7 @@ export interface Team {
     displayName: string;
     flagId: string;
     group: "A" | "B" | "C" | "D" | "E" | "F";
+    players: { id: string, displayName: string }[]
 }
 export interface Stage {
     id: string;
@@ -26,19 +27,24 @@ export interface Match {
     awayTeamScore: string | null;
     scorersIds: string | null;
     isEnd: boolean;
+    homeTeam?: Team;
+    awayTeam?: Team;
 }
 
 export interface UserPick {
     id: string;
     userId: string;
     matchId: string;
-    homeTeamScore: string;
-    awayTeamScore: string;
-    scorer: string
+    homeTeamScore?: number;
+    awayTeamScore?: number;
+    scorer?: string;
+    scorerName?: string;
 }
 
 export interface MatchWithUserPick extends Match {
     userPick: UserPick | null;
+    homeTeam?: Team;
+    awayTeam?: Team;
 }
 
 export interface StageWithMatchesAndUserPick extends Stage {

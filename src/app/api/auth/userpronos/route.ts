@@ -17,7 +17,7 @@ const handler = async function (req: Request) {
     }
 
     const data = await getUserPronosForUpcomingMatches(userId);
-    return Response.json({ data: data });
+    return Response.json({ data: data, userId: userId });
 
 
 };
