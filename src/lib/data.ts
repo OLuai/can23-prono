@@ -239,19 +239,22 @@ export const getUsersWithPicks = async () => {
 
     for (let i = 0; i < users.length; i++) {
         const user = users[i] as UserWithMatchesAndPick;
-        user.matches = matches;
+        user.matches = JSON.parse(JSON.stringify(matches));
 
         for (let j = 0; j < user.matches.length; j++) {
-            const match = matches[j];
+            const match = user.matches[j];
             match.homeTeam = teams.find(e => e.id == match.homeTeamId);
             match.awayTeam = teams.find(e => e.id == match.awayTeamId);
-            match.userPick = allPicks.find(e => e.matchId == match.id) || null;
+            match.userPick = allPicks.find(e => {
+                return e.matchId == match.id && e.userId == user.id;
+            }) || null;
+
         }
 
         result.push(user);
     }
-
     return result;
+
 
 
 }
