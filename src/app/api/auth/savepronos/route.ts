@@ -2,7 +2,6 @@ import { getDB } from "@/config/firebase-admin";
 import { getUserPronosForUpcomingMatches } from "@/lib/data";
 import { getCurrentUser } from "@/lib/session";
 import { UserPick } from "@/types/firestoreData";
-import { NextApiRequest, NextApiResponse } from "next";
 
 
 const handler = async function (req: Request) {

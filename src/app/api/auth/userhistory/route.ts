@@ -1,6 +1,5 @@
 import { getUserPronosForHistoryMatches } from "@/lib/data";
 import { getCurrentUser } from "@/lib/session";
-import { NextApiRequest, NextApiResponse } from "next";
 
 
 const handler = async function (req: Request) {

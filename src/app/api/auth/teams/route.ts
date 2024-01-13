@@ -1,12 +1,8 @@
-import { getDB, initAdmin } from "@/config/firebase-admin";
 import { getTeams } from "@/lib/data";
-import { Team } from "@/types/firestoreData";
-import { NextApiRequest, NextApiResponse } from "next";
-import { v4 } from "uuid";
 
 
-const handler = async function (req: NextApiRequest,
-    res: NextApiResponse<any>
+const handler = async function (req: Request,
+    res: Request
 ) {
     const data = await getTeams();
 
