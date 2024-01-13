@@ -24,7 +24,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
     setIsSaving(true)
 
     let date = new Date().getTime();
-    const reqDate = await fetch("http://worldtimeapi.org/api/timezone/Africa/Abidjan");
+    const reqDate = await fetch("https://worldtimeapi.org/api/timezone/Africa/Abidjan");
     if (reqDate.ok) {
       const reqData = await reqDate.json();
       date = new Date(reqData.datetime).getTime();
