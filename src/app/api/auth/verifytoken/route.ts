@@ -7,4 +7,4 @@ const handler = async function (request: Request) {
     return Response.json({ ok: !!verify });
 };
 
-export { handler as GET, handler as POST };
+export { handler as POST };

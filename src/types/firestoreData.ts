@@ -10,6 +10,7 @@ export interface Stage {
     id: string;
     displayName: string;
     startDate: Timestamp;
+    starDateTimestamp?: number;
 }
 
 
@@ -18,6 +19,7 @@ export interface Match {
     id: string;
     stageId: string;
     startDate: Timestamp;
+    starDateTimestamp?: number;
     homeTeamId: string;
     awayTeamId: string;
     homeTeamScore: string | null;
@@ -35,7 +37,11 @@ export interface UserPick {
     scorer: string
 }
 
-export interface StageWithMatches extends Stage {
-    matches: Match[]
+export interface MatchWithUserPick extends Match {
+    userPick: UserPick | null;
+}
+
+export interface StageWithMatchesAndUserPick extends Stage {
+    matches: MatchWithUserPick[]
 }
 

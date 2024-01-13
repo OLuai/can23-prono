@@ -1,6 +1,6 @@
 import { getDB } from "@/config/firebase-admin"
-import { Match, Stage, StageWithMatches, Team } from "@/types/firestoreData";
-import { } from "firebase-admin/firestore";
+import { Match, Stage, StageWithMatchesAndUserPick, Team, UserPick } from "@/types/firestoreData";
+import { OrderByDirection } from "firebase-admin/firestore";
 import { User } from "next-auth";
 
 export const getUsers = async () => {
@@ -36,60 +36,78 @@ export const getTeams = async () => {
     return teams;
 }
 
-export const getStageAndMatchesUpcoming = async () => {
+export const getUserPickByMatchId = async (userId: string, matchId: string) => {
     const db = getDB();
-    const collectionRef = db.collection("stages")
-    const querySnapshot = await collectionRef.orderBy("startDate", "asc").get()
+    const collectionRef = db.collection("picks")
+    const querySnapshot = await collectionRef.where("matchId", "==", matchId).where("userId", "==", userId).get();
 
-    const result: StageWithMatches[] = [];
+    let result: UserPick | null = null;
 
-    for (let i = 0; i < querySnapshot.docs.length; i++) {
-        const doc = querySnapshot.docs[i]
-        const stage = doc.data() as Stage;
+    if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0]
+        const docData = doc.data() as UserPick;
 
-        const matchesRef = db.collection("matches")
-        const matchesSnapshot = await matchesRef.where("stageId", "==", stage.id).where("isEnd", "==", false).orderBy("startDate", "asc").get();
-
-        if (!matchesSnapshot.empty) {
-            const matches: Match[] = [];
-            matchesSnapshot.forEach(async (doc) => {
-                const match = doc.data() as Match;
-                // console.log("Match :: ", match)
-                matches.push(match);
-            })
-
-            result.push({ ...stage, matches } as StageWithMatches)
-        }
+        result = { ...docData }
     }
 
     return result;
 }
 
-export const getStageAndMatchesHistory = async () => {
+export const getMatchesAndUserPickByStageId = async (userId: string, stageId: string, isEnd: boolean = false, order: OrderByDirection = "asc") => {
     const db = getDB();
-    const collectionRef = db.collection("stages")
-    const querySnapshot = await collectionRef.orderBy("startDate", "desc").get()
-
-    const result: StageWithMatches[] = [];
+    const collectionRef = db.collection("matches")
+    const querySnapshot = await collectionRef.where("stageId", "==", stageId).where("isEnd", "==", isEnd).orderBy("startDate", order).get();
+    const result: any[] = [];
 
     for (let i = 0; i < querySnapshot.docs.length; i++) {
         const doc = querySnapshot.docs[i]
-        const stage = doc.data() as Stage;
+        const docData = doc.data() as Match;
+        docData.starDateTimestamp = docData.startDate.toMillis();
 
-        const matchesRef = db.collection("matches")
-        const matchesSnapshot = await matchesRef.where("stageId", "==", stage.id).where("isEnd", "==", true).orderBy("startDate", "desc").get();
+        const userPick = await getUserPickByMatchId(userId, docData.id);
 
-        if (!matchesSnapshot.empty) {
-            const matches: Match[] = [];
-            matchesSnapshot.forEach(async (doc) => {
-                const match = doc.data() as Match;
-                // console.log("Match :: ", match)
-                matches.push(match);
-            })
-
-            result.push({ ...stage, matches } as StageWithMatches)
-        }
+        result.push({ ...docData, userPick })
     }
+
+    return result;
+
+
+
+}
+
+
+export const getUserPronos = async (userId: string, isEnd: boolean = false, order: OrderByDirection = "asc") => {
+    const db = getDB();
+    const collectionRef = db.collection("stages")
+    const querySnapshot = await collectionRef.orderBy("startDate", order).get()
+
+    const result: StageWithMatchesAndUserPick[] = [];
+
+    for (let i = 0; i < querySnapshot.docs.length; i++) {
+        const doc = querySnapshot.docs[i]
+        const docData = doc.data() as Stage;
+
+        docData.starDateTimestamp = docData.startDate.toMillis();
+
+        const stage = { ...docData }
+
+        const matchesAndPick = await getMatchesAndUserPickByStageId(userId, docData.id, isEnd);
+
+        result.push({ ...docData, matches: matchesAndPick } as StageWithMatchesAndUserPick)
+    }
+
+    return result;
+}
+
+export const getUserPronosForUpcomingMatches = async (userId: string) => {
+    const result = getUserPronos(userId, false, "asc");
+
+    return result;
+}
+
+export const getUserPronosForHistoryMatches = async (userId: string) => {
+
+    const result = getUserPronos(userId, true, "desc");
 
     return result;
 }

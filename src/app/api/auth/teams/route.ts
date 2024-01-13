@@ -1,4 +1,5 @@
 import { getDB, initAdmin } from "@/config/firebase-admin";
+import { getTeams } from "@/lib/data";
 import { NextApiRequest, NextApiResponse } from "next";
 import { v4 } from "uuid";
 
@@ -17,7 +18,9 @@ const handler = async function (req: NextApiRequest,
 
     // await batch.commit();
 
-    return Response.json({ ok: true });
+    const data = await getTeams();
+
+    return Response.json({ data: data });
 
 };
 
