@@ -25,7 +25,7 @@ export const Navigation = ({ }: Props) => {
                 </Link>
             </div>
 
-            <div className="flex flex-col space-y-1 pt-2">
+            {/* <div className="flex flex-col space-y-1 pt-2">
                 <div className="font-medium">Créer une ligue</div>
                 <div className="font-medium">Rejoindre une ligue</div>
             </div>
@@ -35,7 +35,7 @@ export const Navigation = ({ }: Props) => {
                 <Link href="/league?id=007">
                     WeLoveSport
                 </Link>
-            </div>
+            </div> */}
             {/* {docsConfig.sidebarNav.map((item, index) => (
                 <div key={index} className="flex flex-col space-y-3 pt-6">
                     <h4 className="font-medium">{item.title}</h4>
