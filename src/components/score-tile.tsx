@@ -1,4 +1,5 @@
 // "use client"
+import { getUserMatchTotal } from "@/lib/utils"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/registry/default/ui/select"
 import { Match, Stage, Team, UserPick } from "@/types/firestoreData"
 import clsx from "clsx"
@@ -14,9 +15,10 @@ interface Props {
     readonly?: boolean
     setProno?: Function,
     userId: string,
+    date?: number
 }
 
-export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno = () => { }, userId }: Props) => {
+export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno = () => { }, userId, date = new Date().getTime() }: Props) => {
 
     const startDate = new Date(matchInfo.starDateTimestamp ?? "");
 
@@ -36,18 +38,18 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
             <div className="flex flex-col">
                 <div className="flex flex-1">
                     <TeamInfo team={homeTeam} />
-                    <ScoreInfo setProno={setPronoHandle} userId={userId} readonly={readonly} awayTeam={awayTeam} homeTeam={homeTeam} matchInfo={matchInfo} userPick={userPick} />
+                    <ScoreInfo setProno={setPronoHandle} userId={userId} readonly={readonly || (date > (matchInfo.starDateTimestamp || 0))} awayTeam={awayTeam} homeTeam={homeTeam} matchInfo={matchInfo} userPick={userPick} />
                     <TeamInfo team={awayTeam} isAway={true} />
                 </div>
                 {myPick && (
                     <div className="m-4 flex items-center justify-between">
                         <div className="flex gap-2 items-center">
                             <span className="text-sm">Buteur: </span>
-                            <ScorerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={readonly} setProno={setPronoHandle} />
+                            <ScorerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={readonly || (date > (matchInfo.starDateTimestamp || 0))} setProno={setPronoHandle} />
                         </div>
-                        <div className="pourLesPoints">
-
-                        </div>
+                        {matchInfo.isEnd && (<div className="font-semibold text-sm">
+                            {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })} pts`}
+                        </div>)}
                     </div>
                 )}
             </div>

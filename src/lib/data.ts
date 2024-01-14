@@ -6,7 +6,7 @@ import { User } from "next-auth";
 export const getUsers = async () => {
     const db = getDB();
     const collectionRef = db.collection("users")
-    const querySnapshot = await collectionRef.get()
+    const querySnapshot = await collectionRef.orderBy("name", "asc").get()
 
     const users: User[] = [];
 

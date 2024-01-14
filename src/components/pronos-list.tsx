@@ -19,6 +19,8 @@ export const PronosList = ({ type, readonly = true }: Props) => {
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
+  const [apiDate, setApiDate] = useState<number>(new Date().getTime());
+
   const onSave = async () => {
 
     setIsSaving(true)
@@ -29,6 +31,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
       const reqData = await reqDate.json();
       date = new Date(reqData.datetime).getTime();
     }
+    setApiDate(date);
 
     let matches: Match[] = []
     stages.forEach(stage => {
@@ -73,11 +76,15 @@ export const PronosList = ({ type, readonly = true }: Props) => {
 
   useEffect(() => {
     async function fetchData() {
-      // const teamsReq = await fetch(`/api/auth/teams`);
-      // if (teamsReq.ok) {
-      //   const teamsReqData = await teamsReq.json()
-      //   setTeams(teamsReqData.data)
-      // }
+      let date = new Date().getTime();
+      const reqDate = await fetch("https://worldtimeapi.org/api/timezone/Africa/Abidjan");
+      if (reqDate.ok) {
+        const reqData = await reqDate.json();
+        date = new Date(reqData.datetime).getTime();
+      }
+
+      setApiDate(date);
+
       const stageUri = type === "upcoming" ? "userpronos" : "userhistory"
       const stageReq = await fetch(`/api/auth/${stageUri}`, {
         method: "POST",
@@ -125,7 +132,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
               <div className="mt-3 mb-1">{stage.displayName}</div>
               {
                 stage.matches.map(mt => {
-                  return (<ScoreTile userId={userId} setProno={readonly ? undefined : setProno} readonly={readonly} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
+                  return (<ScoreTile date={apiDate} userId={userId} setProno={readonly ? undefined : setProno} readonly={readonly} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
                 })
               }
             </React.Fragment>

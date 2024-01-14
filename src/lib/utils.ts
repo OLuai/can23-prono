@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function getUserMatchTotal(match: MatchWithUserPick) {
   let total = 0;
 
-  if (match.userPick && match.homeTeamScore && match.awayTeamScore && match.userPick.homeTeamScore && match.userPick.awayTeamScore) {
+  if (match.userPick && match.homeTeamScore != null && match.awayTeamScore != null && match.userPick.homeTeamScore != null && match.userPick.awayTeamScore != null) {
     const matchDiffScore = match.homeTeamScore - match.awayTeamScore;
     const userPickDiffScore = match.userPick.homeTeamScore - match.userPick.awayTeamScore
     const bonEcart = matchDiffScore === userPickDiffScore;
@@ -25,24 +25,18 @@ export function getUserMatchTotal(match: MatchWithUserPick) {
     if (match.scorersIds?.includes(match.userPick.scorer || ""))
       total += 1
   }
-
   return total;
 }
 
 export function getUserTotal(user: UserWithMatchesAndPick) {
   const allowMatches = user.matches.filter(mt => mt.isEnd === true);
 
-  let total = 0;
-  for (let i = 0; i < allowMatches.length; i++) {
-    const match = allowMatches[i];
-
-    allowMatches.reduce((prev, cur) => {
-      const total = getUserMatchTotal(cur);
-
-      return prev + total;
-    }, 0)
-  }
-
+  const total = allowMatches.reduce((prev, cur) => {
+    const subTot = getUserMatchTotal(cur);
+    console.log("LOLO LOLITA", subTot, prev);
+    return prev + subTot;
+  }, 0)
+  console.log(user.name, total)
   return total;
 }
 

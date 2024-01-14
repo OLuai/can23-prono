@@ -67,12 +67,14 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
     return rankData;
   });
 
+  // console.log("rankingData", rankingData)
+
   let todayResumeData = users.map(user => {
     const todayMatches = user.matches.filter(mt => date === new Date(mt.starDateTimestamp || "").toLocaleDateString());
 
     const pronos = todayMatches.filter(e => !!e.userPick).map(mt => {
       return (
-        <div key={mt.id} className="flex flex-col">
+        <div key={mt.id} className="flex flex-col font-light text-xs">
           <span>{`${mt.homeTeam?.displayName} : ${mt.userPick?.homeTeamScore}`}</span>
           <span>{`${mt.awayTeam?.displayName} : ${mt.userPick?.awayTeamScore}`}</span>
           <span>{`Buteur : ${mt.userPick?.scorerName}`}</span>
@@ -97,13 +99,7 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
       </TabsList>
       <TabsContent value="ranking">
         <Card>
-          <CardHeader>
-            {/* <CardTitle>Account</CardTitle>
-            <CardDescription>
-              Make changes to your account here. Click save when you're done.
-            </CardDescription> */}
-          </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="p-0 space-y-2">
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
@@ -122,7 +118,7 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
                 <TableBody>
                   {rankingData.map((data, ind) => (
                     <TableRow key={ind}>
-                      <TableCell>
+                      <TableCell className="font-semibold">
                         {`#${data.rank}`}
                       </TableCell>
                       <TableCell>
@@ -142,13 +138,7 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
       </TabsContent>
       <TabsContent value="today-picks">
         <Card>
-          <CardHeader>
-            {/* <CardTitle>Account</CardTitle>
-          <CardDescription>
-            Make changes to your account here. Click save when you're done.
-          </CardDescription> */}
-          </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="p-0 space-y-2">
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
@@ -168,7 +158,7 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
                         {`${data.name}`}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col gap-1 flex-1">
+                        <div className="flex flex-col gap-2 flex-1">
                           {data.pronos}
                         </div>
                       </TableCell>
