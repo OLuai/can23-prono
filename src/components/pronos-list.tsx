@@ -94,7 +94,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
       if (stageReq.ok) {
         const stageReqData = await stageReq.json();
         const stages = stageReqData.data as StageWithMatchesAndUserPick[];
-        console.log("stageReqData.data", stageReqData.data);
+        // console.log("stageReqData.data", stageReqData.data);
 
         setUserId(stageReqData.userId);
         setStages(stages);
