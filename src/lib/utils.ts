@@ -22,7 +22,7 @@ export function getUserMatchTotal(match: MatchWithUserPick) {
       total += 1
     if (bonScore)
       total += 1
-    if (match.scorersIds?.includes(match.userPick.scorer || ""))
+    if (match.scorersIds?.includes(match.userPick.scorer || "0"))
       total += 1
   }
   return total;
