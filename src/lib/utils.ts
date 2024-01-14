@@ -33,10 +33,8 @@ export function getUserTotal(user: UserWithMatchesAndPick) {
 
   const total = allowMatches.reduce((prev, cur) => {
     const subTot = getUserMatchTotal(cur);
-    console.log("LOLO LOLITA", subTot, prev);
     return prev + subTot;
   }, 0)
-  console.log(user.name, total)
   return total;
 }
 
