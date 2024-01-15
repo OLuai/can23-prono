@@ -83,7 +83,7 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
         <div key={mt.id} className="flex flex-col font-light text-xs">
           <span>{`${mt.homeTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.homeTeamScore : "n/a"}`}</span>
           <span>{`${mt.awayTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.awayTeamScore : "n/a"}`}</span>
-          <span>{`Buteur : ${!!mt.userPick ? mt.userPick?.scorerName : "n/a"}`}</span>
+          <span>{`Buteur : ${!!mt.userPick ? mt.userPick?.scorerName ?? "n/a" : "n/a"}`}</span>
         </div>
 
 
