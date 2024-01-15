@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { getUsersWithPicks } from "@/lib/data";
-import { getToday, getUserTotal } from "@/lib/utils";
+import { getApiDate, getToday, getUserMatchTotal, getUserTotal } from "@/lib/utils";
 import { Button } from "@/registry/default/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/registry/default/ui/card";
 import { Input } from "@/registry/default/ui/input";
@@ -17,8 +17,9 @@ export default async function Resume() {
   // console.log("teamRep", teamRep);
 
   const usersData = await getUsersWithPicks();
-  // console.log("e.userPick :::: ", usersData[0].matches[0].userPick);
-  const today = await getToday();
+  const apiDateTime = await getApiDate();
+  const today = new Date(apiDateTime).toLocaleDateString();
+  console.log(today);
 
   return (
     <div className="w-full min-h-[100vh-5rem] flex flex-col items-center mx-auto">
@@ -26,18 +27,19 @@ export default async function Resume() {
       <div className="w-full flex justify-between my-10">
         <h1 className="text-2xl font-bold">We Love Sport</h1>
       </div>
-      <ResumeTabs users={usersData} date={today} />
+      <ResumeTabs currentDatetime={apiDateTime} users={usersData} date={today} />
     </div>
   );
 }
 
 interface ResumeTabsProps {
   users: UserWithMatchesAndPick[];
-  date: string
+  date: string;
+  currentDatetime: number
 
 }
 
-function ResumeTabs({ users, date }: ResumeTabsProps) {
+function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
 
   let rankingData = users.map((user) => {
     const userTotal = getUserTotal(user);
@@ -68,23 +70,26 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
   });
 
   // console.log("rankingData", rankingData)
-
   let todayResumeData = users.map(user => {
-    const todayMatches = user.matches.filter(mt => date === new Date(mt.starDateTimestamp || "").toLocaleDateString());
+    const todayMatches = user.matches.filter(mt => (date === new Date(mt.starDateTimestamp ?? "").toLocaleDateString() && (mt.starDateTimestamp ?? 0) < currentDatetime));
 
-    const pronos = todayMatches.filter(e => !!e.userPick).map(mt => {
+    const pronos = todayMatches.map(mt => {
       return (
-        <div key={mt.id} className="flex flex-col font-light text-xs">
-          <span>{`${mt.homeTeam?.displayName} : ${mt.userPick?.homeTeamScore}`}</span>
-          <span>{`${mt.awayTeam?.displayName} : ${mt.userPick?.awayTeamScore}`}</span>
-          <span>{`Buteur : ${mt.userPick?.scorerName}`}</span>
-        </div>
+        <>
+          <div key={mt.id} className="flex flex-col font-light text-xs">
+            <span>{`${mt.homeTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.homeTeamScore : "n/a"}`}</span>
+            <span>{`${mt.awayTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.awayTeamScore : "n/a"}`}</span>
+            <span>{`Buteur : ${!!mt.userPick ? mt.userPick?.scorerName : "n/a"}`}</span>
+          </div>
+        </>
+
 
       )
     });
     return {
       name: user.name,
-      pronos
+      pronos,
+      subTot: getUserTotal({ ...user, matches: todayMatches })
     }
   })
 
@@ -160,6 +165,7 @@ function ResumeTabs({ users, date }: ResumeTabsProps) {
                       <TableCell>
                         <div className="flex flex-col gap-2 flex-1">
                           {data.pronos}
+                          <span className="mt-1">{`${data.subTot} pts`}</span>
                         </div>
                       </TableCell>
                     </TableRow>

@@ -21,6 +21,7 @@ interface Props {
 export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno = () => { }, userId, date = new Date().getTime() }: Props) => {
 
     const startDate = new Date(matchInfo.starDateTimestamp ?? "");
+    const isReadonly = readonly || (date > (matchInfo.starDateTimestamp || 0))
 
     const [myPick, setMyPick] = useState(userPick);
 
@@ -30,7 +31,7 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
     }
 
     return (
-        <div className="flex flex-col gap-1 mb-5">
+        <div className={clsx("flex flex-col gap-1 mb-5", isReadonly && "opacity-65")}>
             <div className="text-sm text-muted-foreground flex items-center justify-between">
                 <span className="">{startDate.toLocaleDateString()}</span>
                 <span className="">{startDate.toTimeString().slice(0, 5)}</span>
@@ -38,14 +39,14 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
             <div className="flex flex-col">
                 <div className="flex flex-1">
                     <TeamInfo team={homeTeam} />
-                    <ScoreInfo setProno={setPronoHandle} userId={userId} readonly={readonly || (date > (matchInfo.starDateTimestamp || 0))} awayTeam={awayTeam} homeTeam={homeTeam} matchInfo={matchInfo} userPick={userPick} />
+                    <ScoreInfo setProno={setPronoHandle} userId={userId} readonly={isReadonly} awayTeam={awayTeam} homeTeam={homeTeam} matchInfo={matchInfo} userPick={userPick} />
                     <TeamInfo team={awayTeam} isAway={true} />
                 </div>
                 {myPick && (
                     <div className="m-4 flex items-center justify-between">
                         <div className="flex gap-2 items-center">
                             <span className="text-sm">Buteur: </span>
-                            <ScorerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={readonly || (date > (matchInfo.starDateTimestamp || 0))} setProno={setPronoHandle} />
+                            <ScorerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={isReadonly} setProno={setPronoHandle} />
                         </div>
                         {matchInfo.isEnd && (<div className="font-semibold text-sm">
                             {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })} pts`}
