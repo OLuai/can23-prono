@@ -13,7 +13,7 @@ export function getUserMatchTotal(match: MatchWithUserPick) {
     const matchDiffScore = match.homeTeamScore - match.awayTeamScore;
     const userPickDiffScore = match.userPick.homeTeamScore - match.userPick.awayTeamScore
     const bonEcart = matchDiffScore === userPickDiffScore;
-    const bonneIssue = (matchDiffScore === 0 && userPickDiffScore === 0) || (matchDiffScore * userPickDiffScore > 0)
+    const bonneIssue = (matchDiffScore !== 0) && (matchDiffScore * userPickDiffScore > 0)
     const bonScore = match.homeTeamScore == match.userPick.homeTeamScore && match.awayTeamScore == match.userPick.awayTeamScore;
 
     if (bonEcart)
