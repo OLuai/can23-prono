@@ -11,18 +11,17 @@ export const Navigation = ({ closeDrawer = () => { } }: Props) => {
     return (
         <div className="flex flex-col space-y-2">
 
-            <div className="flex flex-col space-y-1 pt-2">
-                <h4 className="font-medium">Mes pronos</h4>
-                <Link onClick={() => closeDrawer()} href="/">
+            <div className="flex flex-col space-y-4 pt-2">
+                <Link className="hover:underline active:underline" onClick={() => closeDrawer()} href="/">
                     Récapitulatif
                 </Link>
-                <Link onClick={() => closeDrawer()} href="/upcoming">
+                <Link className="hover:underline active:underline" onClick={() => closeDrawer()} href="/upcoming">
                     Match à venir
                 </Link>
                 {/* <Link onClick={()=>closeDrawer()} href="/bonus">
                     Questions bonus
                 </Link> */}
-                <Link onClick={() => closeDrawer()} href="/history">
+                <Link className="hover:underline active:underline" onClick={() => closeDrawer()} href="/history">
                     Historique
                 </Link>
             </div>

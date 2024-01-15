@@ -1,14 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 import { getUsersWithPicks } from "@/lib/data";
 import { getApiDate, getToday, getUserMatchTotal, getUserTotal } from "@/lib/utils";
-import { Button } from "@/registry/default/ui/button";
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/registry/default/ui/card";
-import { Input } from "@/registry/default/ui/input";
-import { Label } from "@/registry/default/ui/label";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/registry/default/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/default/ui/tabs";
-import { MatchWithUserPick, UserWithMatchesAndPick } from "@/types/firestoreData";
-import { User } from "next-auth";
+import { UserWithMatchesAndPick } from "@/types/firestoreData";
+
+
 
 export default async function Resume() {
 
@@ -18,7 +18,7 @@ export default async function Resume() {
 
   const usersData = await getUsersWithPicks();
   const apiDateTime = await getApiDate();
-  const today = new Date(apiDateTime).toLocaleDateString();
+  const today = new Date(apiDateTime).toISOString().slice(0, 10);
   console.log(today);
 
   return (
@@ -71,17 +71,20 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
 
   // console.log("rankingData", rankingData)
   let todayResumeData = users.map(user => {
-    const todayMatches = user.matches.filter(mt => (date === new Date(mt.starDateTimestamp ?? "").toLocaleDateString() && (mt.starDateTimestamp ?? 0) < currentDatetime));
+
+    const todayMatches = user.matches.filter(mt => {
+      const matchDate = new Date(mt.starDateTimestamp ?? "").toISOString().slice(0, 10)
+      return date === matchDate && (mt.starDateTimestamp ?? 0) < currentDatetime
+    });
 
     const pronos = todayMatches.map(mt => {
       return (
-        <>
-          <div key={mt.id} className="flex flex-col font-light text-xs">
-            <span>{`${mt.homeTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.homeTeamScore : "n/a"}`}</span>
-            <span>{`${mt.awayTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.awayTeamScore : "n/a"}`}</span>
-            <span>{`Buteur : ${!!mt.userPick ? mt.userPick?.scorerName : "n/a"}`}</span>
-          </div>
-        </>
+
+        <div key={mt.id} className="flex flex-col font-light text-xs">
+          <span>{`${mt.homeTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.homeTeamScore : "n/a"}`}</span>
+          <span>{`${mt.awayTeam?.displayName} : ${!!mt.userPick ? mt.userPick?.awayTeamScore : "n/a"}`}</span>
+          <span>{`Buteur : ${!!mt.userPick ? mt.userPick?.scorerName : "n/a"}`}</span>
+        </div>
 
 
       )

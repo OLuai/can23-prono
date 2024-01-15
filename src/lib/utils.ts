@@ -43,14 +43,14 @@ export async function getToday() {
   const req = await fetch("http://worldtimeapi.org/api/timezone/Africa/Abidjan");
   if (req.ok) {
     const reqData = await req.json();
-    result = new Date(reqData.datetime).toLocaleDateString();
+    result = reqData.utc_datetime.slice(0, 10);
   }
   return result;
 }
 
 export async function getApiDate() {
   let result = new Date().getTime();
-  const req = await fetch("http://worldtimeapi.org/api/timezone/Africa/Abidjan");
+  const req = await fetch("https://worldtimeapi.org/api/timezone/Africa/Abidjan");
   if (req.ok) {
     const reqData = await req.json();
     result = new Date(reqData.datetime).getTime();

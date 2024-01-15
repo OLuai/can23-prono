@@ -28,6 +28,7 @@ interface RootLayoutProps {
   children: React.ReactNode
 }
 
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url.base),
   title: {
@@ -77,7 +78,7 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 }
-
+export const revalidate = 1
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await getCurrentUser();
   const isAuth = !!session;
