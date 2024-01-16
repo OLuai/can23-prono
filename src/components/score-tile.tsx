@@ -21,9 +21,10 @@ interface Props {
 export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno = () => { }, userId, date = new Date().getTime() }: Props) => {
 
     const startDate = new Date(matchInfo.starDateTimestamp ?? "");
-    const isReadonly = readonly || (date > (matchInfo.starDateTimestamp || 0))
+    const isReadonly = readonly || (date > (matchInfo.starDateTimestamp || 0));
+    const initialPick: UserPick = userPick || { id: v4(), matchId: matchInfo.id, userId: userId }
 
-    const [myPick, setMyPick] = useState(userPick);
+    const [myPick, setMyPick] = useState<UserPick>(userPick ?? initialPick);
 
     const setPronoHandle = (prono: UserPick) => {
         setProno ? setProno(prono) : undefined;
@@ -39,7 +40,7 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
             <div className="flex flex-col">
                 <div className="flex flex-1">
                     <TeamInfo team={homeTeam} />
-                    <ScoreInfo setProno={setPronoHandle} userId={userId} readonly={isReadonly} awayTeam={awayTeam} homeTeam={homeTeam} matchInfo={matchInfo} userPick={userPick} />
+                    <ScoreInfo setProno={setPronoHandle} userId={userId} readonly={isReadonly} awayTeam={awayTeam} homeTeam={homeTeam} matchInfo={matchInfo} userPick={myPick} />
                     <TeamInfo team={awayTeam} isAway={true} />
                 </div>
                 {myPick && (
@@ -78,7 +79,7 @@ const TeamInfo = ({ team, isAway = false }: TeamTileProps) => {
 
 interface ScoreInfoProps {
     matchInfo: Match,
-    userPick: UserPick | null,
+    userPick: UserPick,
     homeTeam?: Team,
     awayTeam?: Team,
     readonly?: boolean,
@@ -87,18 +88,33 @@ interface ScoreInfoProps {
 }
 
 const ScoreInfo = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno, userId }: ScoreInfoProps) => {
-    const initialPick: UserPick = userPick || { id: v4(), matchId: matchInfo.id, userId: userId }
-    const [pick, setPick] = useState<UserPick>(initialPick);
+
+    const pick = userPick;
+    const homePlayersIds = homeTeam?.players.map(e => e.id);
+    const awayPlayersIds = awayTeam?.players.map(e => e.id);
 
     const changeHandler = (propName: "homeTeamScore" | "awayTeamScore", value: string) => {
 
         let numberValue = parseInt(value) || 0;
 
         const newPick = { ...pick, homeTeamScore: pick.homeTeamScore || 0, awayTeamScore: pick.awayTeamScore || 0, [propName]: numberValue };
-        setPick(newPick);
-        setProno ? setProno(newPick) : undefined;
+        if (numberValue === 0) {
+            if (newPick.scorer != undefined && propName === "homeTeamScore" && homePlayersIds?.includes(newPick.scorer)) {
+                newPick.scorer = newPick.awayTeamScore > 0 ? undefined : "aucun";
+                newPick.scorerName = newPick.awayTeamScore > 0 ? undefined : "aucun";
 
-        // console.log(setProno, "ON CHANGE", pick);
+            }
+            else if (newPick.scorer != undefined && propName === "awayTeamScore" && awayPlayersIds?.includes(newPick.scorer)) {
+                newPick.scorer = newPick.homeTeamScore > 0 ? undefined : "aucun";
+                newPick.scorerName = newPick.homeTeamScore > 0 ? undefined : "aucun";
+            }
+            else if (!!!newPick.scorer) {
+                newPick.scorer = "aucun";
+                newPick.scorerName = "aucun";
+            }
+        }
+
+        setProno ? setProno(newPick) : undefined;
 
     }
 
@@ -130,8 +146,6 @@ const ScorerSelect = ({ homeTeam, awayTeam, readonly, userPick, setProno = () =>
 
         setProno ? setProno(newPick) : undefined;
 
-        // console.log("ON CHANGE", newPick);
-
     }
     return (
         <Select onValueChange={changeHandler} value={userPick.scorer} disabled={readonly}>
@@ -139,14 +153,19 @@ const ScorerSelect = ({ homeTeam, awayTeam, readonly, userPick, setProno = () =>
                 <SelectValue placeholder="Choisir un buteur" />
             </SelectTrigger>
             <SelectContent>
-                <SelectGroup>
-                    <SelectLabel>{homeTeam?.displayName}</SelectLabel>
-                    {homeTeam?.players.map(pl => <SelectItem key={pl.id} value={pl.id}>{pl.displayName}</SelectItem>)}
-                </SelectGroup>
-                <SelectGroup>
-                    <SelectLabel>{awayTeam?.displayName}</SelectLabel>
-                    {awayTeam?.players.map(pl => <SelectItem key={pl.id} value={pl.id}>{pl.displayName}</SelectItem>)}
-                </SelectGroup>
+                {userPick.scorer === "aucun" && (<SelectItem value={"aucun"}>{"aucun"}</SelectItem>)}
+                {((userPick.homeTeamScore ?? 0) > 0) && (
+                    <SelectGroup>
+                        <SelectLabel>{homeTeam?.displayName}</SelectLabel>
+                        {homeTeam?.players.map(pl => <SelectItem key={pl.id} value={pl.id}>{pl.displayName}</SelectItem>)}
+                    </SelectGroup>
+                )}
+                {((userPick.awayTeamScore ?? 0) > 0) && (
+                    <SelectGroup>
+                        <SelectLabel>{awayTeam?.displayName}</SelectLabel>
+                        {awayTeam?.players.map(pl => <SelectItem key={pl.id} value={pl.id}>{pl.displayName}</SelectItem>)}
+                    </SelectGroup>
+                )}
             </SelectContent>
         </Select>
     )
