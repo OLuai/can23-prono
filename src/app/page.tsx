@@ -74,7 +74,7 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
 
     const todayMatches = user.matches.filter(mt => {
       const matchDate = new Date(mt.starDateTimestamp ?? "").toISOString().slice(0, 10)
-      return date === matchDate
+      return date === matchDate && (mt.starDateTimestamp ?? 0) < currentDatetime
     });
 
     const pronos = todayMatches.map(mt => {
