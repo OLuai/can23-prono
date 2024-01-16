@@ -40,7 +40,7 @@ export function getUserTotal(user: UserWithMatchesAndPick) {
 
 export async function getToday() {
   let result = new Date().toLocaleDateString();
-  const req = await fetch("http://worldtimeapi.org/api/timezone/Africa/Abidjan");
+  const req = await fetch(`https://worldtimeapi.org/api/timezone/Africa/Abidjan?${new Date().getTime()}`);
   if (req.ok) {
     const reqData = await req.json();
     result = reqData.utc_datetime.slice(0, 10);
@@ -50,7 +50,7 @@ export async function getToday() {
 
 export async function getApiDate() {
   let result = new Date().getTime();
-  const req = await fetch("https://worldtimeapi.org/api/timezone/Africa/Abidjan");
+  const req = await fetch(`https://worldtimeapi.org/api/timezone/Africa/Abidjan?${new Date().getTime()}`);
   if (req.ok) {
     const reqData = await req.json();
     result = new Date(reqData.datetime).getTime();

@@ -113,6 +113,12 @@ const ScoreInfo = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, s
                 newPick.scorerName = "aucun";
             }
         }
+        else {
+            if (newPick.scorer == "aucun") {
+                newPick.scorer = undefined;
+                newPick.scorerName = undefined;
+            }
+        }
 
         setProno ? setProno(newPick) : undefined;
 
