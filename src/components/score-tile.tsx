@@ -15,10 +15,11 @@ interface Props {
     readonly?: boolean
     setProno?: Function,
     userId: string,
-    date?: number
+    date?: number,
+    stage: Stage
 }
 
-export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno = () => { }, userId, date = new Date().getTime() }: Props) => {
+export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = true, setProno = () => { }, userId, date = new Date().getTime(), stage }: Props) => {
 
     const startDate = new Date(matchInfo.starDateTimestamp ?? "");
     const isReadonly = readonly || (date > (matchInfo.starDateTimestamp || 0));
@@ -28,6 +29,18 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
 
     const setPronoHandle = (prono: UserPick) => {
         setProno ? setProno(prono) : undefined;
+        if (stage.type === "final" && prono.awayTeamScore !== prono.homeTeamScore) {
+            delete prono.winner;
+        }
+        if (prono.awayTeamScore === 0 && prono.homeTeamScore === 0) {
+            prono.scorer = "aucun";
+            prono.scorerName = "aucun";
+        } else {
+            if (prono.scorer === "aucun") {
+                delete prono.scorer
+                delete prono.scorerName
+            }
+        }
         setMyPick(prono);
     }
 
@@ -49,9 +62,20 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
                             <span className="text-sm">Buteur: </span>
                             <ScorerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={isReadonly} setProno={setPronoHandle} />
                         </div>
-                        {matchInfo.isEnd && (<div className="font-semibold text-sm">
+                        {/* {matchInfo.isEnd && (<div className="font-semibold text-sm">
                             {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })} pts`}
-                        </div>)}
+                        </div>)} */}
+                    </div>
+                )}
+                {myPick && stage.type === "final" && (myPick.awayTeamScore === myPick.homeTeamScore) && (
+                    <div className="m-4 flex items-center justify-between">
+                        <div className="flex gap-2 items-center">
+                            <span className="text-sm">Qualif: </span>
+                            <WinnerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={isReadonly} setProno={setPronoHandle} />
+                        </div>
+                        {/* {matchInfo.isEnd && (<div className="font-semibold text-sm">
+                            {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })} pts`}
+                        </div>)} */}
                     </div>
                 )}
             </div>
@@ -173,6 +197,29 @@ const ScorerSelect = ({ homeTeam, awayTeam, readonly, userPick, setProno = () =>
                     </SelectGroup>
                 )}
             </SelectContent>
+        </Select>
+    )
+}
+
+const WinnerSelect = ({ homeTeam, awayTeam, readonly, userPick, setProno = () => { } }: ScorerSelectProps) => {
+    const changeHandler = (value: string) => {
+
+        const newPick = { ...userPick };
+        newPick.winner = value;
+        setProno ? setProno(newPick) : undefined;
+
+    }
+    return (
+        <Select onValueChange={changeHandler} value={homeTeam?.id} disabled={readonly}>
+            <SelectTrigger className="w-[280px]">
+                <SelectValue />
+            </SelectTrigger>
+            {homeTeam && awayTeam && (
+                <SelectContent>
+                    <SelectItem value={homeTeam?.id}>{homeTeam.displayName}</SelectItem>
+                    <SelectItem value={awayTeam?.id}>{awayTeam.displayName}</SelectItem>
+                </SelectContent>
+            )}
         </Select>
     )
 }

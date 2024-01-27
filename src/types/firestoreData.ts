@@ -13,6 +13,7 @@ export interface Stage {
     displayName: string;
     startDate: Timestamp;
     starDateTimestamp?: number;
+    type: "group" | "final"
 }
 
 
@@ -40,6 +41,7 @@ export interface UserPick {
     awayTeamScore?: number;
     scorer?: string;
     scorerName?: string;
+    winner?: string
 }
 
 export interface MatchWithUserPick extends Match {
