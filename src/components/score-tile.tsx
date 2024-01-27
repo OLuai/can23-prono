@@ -210,7 +210,7 @@ const WinnerSelect = ({ homeTeam, awayTeam, readonly, userPick, setProno = () =>
 
     }
     return (
-        <Select onValueChange={changeHandler} value={homeTeam?.id} disabled={readonly}>
+        <Select onValueChange={changeHandler} value={userPick.winner} disabled={readonly}>
             <SelectTrigger className="w-[280px]">
                 <SelectValue />
             </SelectTrigger>
