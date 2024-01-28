@@ -47,8 +47,6 @@ export const PronosList = ({ type, readonly = true }: Props) => {
       return false;
     }).map(mt => mt.id);
 
-    allowMatches = matches.map(mt => mt.id);
-
     let allowPronostics = userPronostics.filter(pick => allowMatches.includes(pick.matchId));
 
 
@@ -144,7 +142,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
                     <div className="mt-3 mb-1">{stage.displayName}</div>
                     {
                       stage.matches.map(mt => {
-                        return (<ScoreTile stage={stage} date={new Date(2024, 0, 27).getTime()} userId={userId} setProno={setProno} readonly={false} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
+                        return (<ScoreTile stage={stage} date={apiDate} userId={userId} setProno={readonly ? undefined : setProno} readonly={readonly} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
                       })
                     }
                   </React.Fragment>
