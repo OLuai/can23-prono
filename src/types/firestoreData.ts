@@ -31,6 +31,7 @@ export interface Match {
     isEnd: boolean;
     homeTeam?: Team;
     awayTeam?: Team;
+    winner?: string
 }
 
 export interface UserPick {

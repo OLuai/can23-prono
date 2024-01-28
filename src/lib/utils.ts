@@ -9,19 +9,33 @@ export function cn(...inputs: ClassValue[]) {
 export function getUserMatchTotal(match: MatchWithUserPick) {
   let total = 0;
 
+  const isFinalStage = match.stageId !== "41bf2615-bd8f-4f76-a8a5-6c4fb19d44de";
+
   if (match.userPick && match.homeTeamScore != null && match.awayTeamScore != null && match.userPick.homeTeamScore != null && match.userPick.awayTeamScore != null) {
     const matchDiffScore = match.homeTeamScore - match.awayTeamScore;
     const userPickDiffScore = match.userPick.homeTeamScore - match.userPick.awayTeamScore
-    const bonEcart = matchDiffScore === userPickDiffScore;
-    const bonneIssue = (matchDiffScore === 0 && userPickDiffScore === 0) || (matchDiffScore * userPickDiffScore > 0)
-    const bonScore = match.homeTeamScore == match.userPick.homeTeamScore && match.awayTeamScore == match.userPick.awayTeamScore;
 
+    const isDraw = (matchDiffScore === 0 && userPickDiffScore === 0);
+
+    const bonEcart = matchDiffScore === userPickDiffScore;
+    const bonneIssue = isDraw || (matchDiffScore * userPickDiffScore > 0)
+    const bonScore = match.homeTeamScore == match.userPick.homeTeamScore && match.awayTeamScore == match.userPick.awayTeamScore;
     if (bonEcart)
-      total += 1
-    if (bonneIssue)
       total += 1
     if (bonScore)
       total += 1
+
+    if (!isFinalStage && bonneIssue) {
+      total += 1
+    }
+    else if (isFinalStage && !isDraw && bonneIssue) {
+      total += 1
+    }
+    else if (isFinalStage && isDraw && match.userPick.winner && match.userPick.winner === match.winner) {
+      total += 1
+    }
+
+
     if (match.scorersIds?.includes(match.userPick.scorer || "OURAGA LUAI"))
       total += 1
   }
