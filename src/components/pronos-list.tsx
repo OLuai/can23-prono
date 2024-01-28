@@ -47,6 +47,8 @@ export const PronosList = ({ type, readonly = true }: Props) => {
       return false;
     }).map(mt => mt.id);
 
+    allowMatches = matches.map(mt => mt.id);
+
     let allowPronostics = userPronostics.filter(pick => allowMatches.includes(pick.matchId));
 
 
