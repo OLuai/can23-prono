@@ -45,8 +45,9 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
     const userTotal = getUserTotal(user);
     return {
       name: user.name,
-      total: userTotal,
-      rank: 0
+      total: userTotal[0],
+      rank: 0,
+      score: userTotal[1]
     }
   }).sort((u1, u2) => {
     if (u1.total < u2.total)
@@ -118,7 +119,10 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
                     <TableHead>
                       Nom
                     </TableHead>
-                    <TableHead>
+                    <TableHead className="text-center">
+                      Scores exacts
+                    </TableHead>
+                    <TableHead className="text-center">
                       Points
                     </TableHead>
                   </TableRow>
@@ -132,7 +136,10 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
                       <TableCell>
                         {`${data.name}`}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
+                        {`${data.score}`}
+                      </TableCell>
+                      <TableCell className="text-center">
                         {`${data.total}`}
                       </TableCell>
                     </TableRow>

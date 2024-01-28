@@ -62,9 +62,6 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
                             <span className="text-sm">Buteur: </span>
                             <ScorerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={isReadonly} setProno={setPronoHandle} />
                         </div>
-                        {/* {matchInfo.isEnd && (<div className="font-semibold text-sm">
-                            {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })} pts`}
-                        </div>)} */}
                     </div>
                 )}
                 {myPick && stage.type === "final" && (myPick.awayTeamScore === myPick.homeTeamScore) && (
@@ -73,11 +70,11 @@ export const ScoreTile = ({ matchInfo, userPick, homeTeam, awayTeam, readonly = 
                             <span className="text-sm">Qualif: </span>
                             <WinnerSelect userPick={myPick} awayTeam={awayTeam} homeTeam={homeTeam} readonly={isReadonly} setProno={setPronoHandle} />
                         </div>
-                        {/* {matchInfo.isEnd && (<div className="font-semibold text-sm">
-                            {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })} pts`}
-                        </div>)} */}
                     </div>
                 )}
+                {matchInfo.isEnd && (<div className="font-semibold text-sm">
+                    {`${getUserMatchTotal({ ...matchInfo, userPick: userPick })[0]} pts`}
+                </div>)}
             </div>
         </div>
     )
