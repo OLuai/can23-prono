@@ -144,7 +144,7 @@ export const PronosList = ({ type, readonly = true }: Props) => {
                     <div className="mt-3 mb-1">{stage.displayName}</div>
                     {
                       stage.matches.map(mt => {
-                        return (<ScoreTile stage={stage} date={apiDate} userId={userId} setProno={readonly ? undefined : setProno} readonly={readonly} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
+                        return (<ScoreTile stage={stage} date={apiDate} userId={userId} setProno={setProno} readonly={false} key={mt.id} matchInfo={mt} userPick={mt.userPick} awayTeam={mt.awayTeam} homeTeam={mt.homeTeam} />)
                       })
                     }
                   </React.Fragment>
