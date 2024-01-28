@@ -93,7 +93,7 @@ function ResumeTabs({ users, date, currentDatetime }: ResumeTabsProps) {
     return {
       name: user.name,
       pronos,
-      subTot: getUserTotal({ ...user, matches: todayMatches })
+      subTot: getUserTotal({ ...user, matches: todayMatches })[0]
     }
   })
 
