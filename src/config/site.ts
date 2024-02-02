@@ -6,7 +6,7 @@ export const siteConfig: SiteConfig = {
   name: "Prono CAN 2023",
   author: "Ghostscripter",
   description:
-    "Application pour faire des pronostiques sur la CAN2023.",
+    "Application pour faire des pronostics sur la CAN2023.",
   keywords: ["CAN", "AFCON", "Pronostic"],
   url: {
     base: env.NEXT_PUBLIC_APP_URL,

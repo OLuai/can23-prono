@@ -43,7 +43,7 @@ export default async function Login() {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;Cette application est faite pour défier vos amis avec vos pronostiques en rapport avec la CAN 2023 en Côte d'Ivoire.&rdquo;
+                &ldquo;Cette application est faite pour défier vos amis avec vos pronostics en rapport avec la CAN 2023 en Côte d'Ivoire.&rdquo;
               </p>
               <footer className="text-sm">Bonne fête du football africain</footer>
             </blockquote>
